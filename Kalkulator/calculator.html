@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Calculator</title>
+<style>
+  button {
+    width: 50px;
+    height: 50px;
+    font-size: 20px;
+    margin: 5px;
+  }
+  #display {
+    width: 210px;
+    height: 44px;
+    font-size: 24px;
+    margin: 5px;
+    float: left;
+  }
+  #history {
+    width: 270px;
+    height: 150px;
+    font-size: 16px;
+    margin: 70px 5px 5px 5px;
+    resize: none;
+    clear: both;
+  }
+  #main {
+    display: grid;
+    grid-template-columns: repeat(4, 50px);
+    gap: 5px;
+  }
+</style>
+<script>
+function gen() {
+  const main = document.getElementById("main");
+  
+  const keysLayout = [
+    ['7', '8', '9', '/'],
+    ['4', '5', '6', '*'],
+    ['1', '2', '3', '-'],
+    ['0', '.', '=', '+'],
+    ['CE', 'C']
+  ];
+  
+  keysLayout.forEach(row => {
+    row.forEach(keyValue => {
+      const key = document.createElement("button");
+      key.innerText = keyValue;
+      key.onclick = () => {
+        if (keyValue === "=") {
+          calculate();
+        } else if (keyValue === "CE") {
+          clearEntry();
+        } else if (keyValue === "C") {
+          clearAll();
+        } else {
+          document.getElementById("display").value += keyValue;
+        }
+      };
+      main.appendChild(key);
+    });
+  });
+  
+  const display = document.createElement("input");
+  display.setAttribute("type", "text");
+  display.setAttribute("id", "display");
+  display.setAttribute("readonly", true);
+  main.appendChild(display);
+  
+  const history = document.createElement("textarea");
+  history.setAttribute("id", "history");
+  history.setAttribute("readonly", true);
+  main.appendChild(history);
+}
+
+function clearEntry() {
+  const displayValue = document.getElementById("display").value;
+  document.getElementById("display").value = displayValue.slice(0, -1);
+}
+
+function clearAll() {
+  document.getElementById("display").value = "";
+}
+
+function calculate() {
+  const displayValue = document.getElementById("display").value;
+  let result;
+  try {
+    result = eval(displayValue);
+    updateHistory(displayValue + " = " + result);
+  } catch (error) {
+    result = "Error";
+    updateHistory("Error: " + displayValue);
+  }
+  document.getElementById("display").value = result;
+}
+
+function updateHistory(entry) {
+  const history = document.getElementById("history");
+  history.value += entry + "\n";
+}
+</script>
+</head>
+<body onload="gen()">
+<div id="main">
+</div>
+</body>
+</html>
